@@ -1,0 +1,3 @@
+rootProject.name = 'ReactNativeOpenstreetmapApp'
+
+include ':app'
