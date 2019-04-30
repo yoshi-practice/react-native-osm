@@ -1,13 +1,6 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
+import MapView, { UrlTile, Marker } from 'react-native-maps';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -18,12 +11,54 @@ const instructions = Platform.select({
 
 type Props = {};
 export default class App extends Component<Props> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      region: {
+        latitude: 35.645736,
+        longitude: 139.747575,
+        latitudeDelta: 0.03,
+      },
+      urlTemplate: 'http://c.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      markers: [
+        {
+          key: "tamachi sta.",
+          latlng: {
+            latitude: 35.645736,
+            longitude: 139.747575,
+          },
+          title: '田町駅',
+          description: '田町ニューデイズ',  
+        },
+      ],
+    };
+  }
+
+  onRegionChange(region) {
+    this.setState({ region });
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
+        <MapView
+          style={styles.map}
+          region={this.state.region}
+          onRegionChange={this.onRegionChange.bind(this)}
+        >
+          <UrlTile
+            urlTemplate={this.state.urlTemplate}
+            maximumZ={19}
+          />
+          {this.state.markers.map(marker => (
+            <Marker
+              key={marker.key}
+              coordinate={marker.latlng}
+              title={marker.title}
+              description={marker.description}
+            />
+          ))}
+        </MapView>
       </View>
     );
   }
@@ -31,19 +66,13 @@ export default class App extends Component<Props> {
 
 const styles = StyleSheet.create({
   container: {
+    ...StyleSheet.absoluteFillObject,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#FFFFFF',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  map: {
+    ...StyleSheet.absoluteFillObject,
   },
 });
